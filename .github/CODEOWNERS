@@ -1,0 +1,21 @@
+# Default owner for all repository changes.
+* @SamsterZero
+
+# Security-sensitive automation and repository policy.
+/.github/ @SamsterZero
+/SECURITY.md @SamsterZero
+/CODE_OF_CONDUCT.md @SamsterZero
+
+# Architecture, API contracts, and database migrations.
+/PROJECT.md @SamsterZero
+/docs/ @SamsterZero
+/src/main/resources/db/migration/ @SamsterZero
+
+# Container and dependency configuration.
+/Dockerfile @SamsterZero
+/compose.yaml @SamsterZero
+/pom.xml @SamsterZero
+
+# Repository-local AI instructions and skills.
+/AGENTS.md @SamsterZero
+/.agents/ @SamsterZero
