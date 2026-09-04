@@ -11,20 +11,28 @@
 	<groupId>dev.samster</groupId>
 	<artifactId>granthalay</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
+	<name>Granthalay API</name>
+	<description>Modular Spring Boot backend for Granthalay accounts, catalog, commerce, entitlements, and protected book delivery.</description>
+	<url>https://github.com/SamsterZero/granthalayapi</url>
 	<licenses>
-		<license/>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
+		</license>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<id>SamsterZero</id>
+			<name>SamsterZero</name>
+			<url>https://github.com/SamsterZero</url>
+		</developer>
 	</developers>
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection>scm:git:https://github.com/SamsterZero/granthalayapi.git</connection>
+		<developerConnection>scm:git:https://github.com/SamsterZero/granthalayapi.git</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/SamsterZero/granthalayapi</url>
 	</scm>
 	<properties>
 		<java.version>25</java.version>
