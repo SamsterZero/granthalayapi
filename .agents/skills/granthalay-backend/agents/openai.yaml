@@ -1,0 +1,4 @@
+interface:
+  display_name: "Granthalay Backend"
+  short_description: "Implement modular Granthalay backend features"
+  default_prompt: "Use $granthalay-backend to implement a backend feature with tests and documentation."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Granthalay Database"
+  short_description: "Design safe PostgreSQL and Flyway changes"
+  default_prompt: "Use $granthalay-database to design and verify this Granthalay schema change."

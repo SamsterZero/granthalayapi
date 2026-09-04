@@ -1,0 +1,4 @@
+interface:
+  display_name: "Granthalay Review"
+  short_description: "Review backend correctness and security"
+  default_prompt: "Use $granthalay-review to review this backend change and report actionable findings."
