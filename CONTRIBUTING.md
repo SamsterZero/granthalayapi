@@ -13,7 +13,14 @@ privacy-first behavior of the companion reader.
 
 ## Local setup
 
-Install JDK 25 and Docker, fork and clone the repository, then run:
+Install JDK 25 and Docker with Compose support, then fork and clone the repository:
+
+```sh
+git clone https://github.com/<your-account>/granthalayapi.git
+cd granthalayapi
+```
+
+Start the application:
 
 ```sh
 ./mvnw spring-boot:run
@@ -22,15 +29,29 @@ Install JDK 25 and Docker, fork and clone the repository, then run:
 The development database is defined in `compose.yaml` and may be started explicitly with
 `docker compose up -d postgres`. Keep credentials local; `.env` files are ignored.
 
+The API defaults to `http://localhost:8080`. Swagger UI is available at `/swagger-ui.html` as
+endpoints are introduced.
+
 ## Validate a change
 
 ```sh
 ./mvnw verify
-docker build -t granthalay-api:dev .
 ```
 
 Tests use Testcontainers and require a working Docker daemon. Add focused tests for new behavior and
 integration tests for persistence, security boundaries, migrations, and module interactions.
+
+## Containers
+
+Build the application image locally with:
+
+```sh
+docker build -t granthalay-api:dev .
+```
+
+The container requires a reachable PostgreSQL database and runtime configuration. Never bake secrets
+into an image. Release automation publishes multi-architecture images to
+`ghcr.io/samsterzero/granthalayapi`.
 
 ## Database changes
 

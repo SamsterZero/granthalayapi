@@ -4,6 +4,22 @@ This repository contains the separately deployed backend for the
 [Granthalay static PWA](https://github.com/SamsterZero/Granthalay). It begins as a modular monolith:
 one application and one PostgreSQL database with explicit module ownership.
 
+## Status
+
+The project is at the foundation stage. The application skeleton, local PostgreSQL environment,
+container image, documentation, and CI automation are present; public API endpoints and product
+modules are not implemented yet.
+
+## Technology
+
+- Java 25 and Spring Boot 4
+- Spring Modulith
+- PostgreSQL, Flyway, and Spring Data JPA
+- Spring Security and JDBC-backed sessions
+- OpenAPI and Swagger UI
+- JUnit and Testcontainers
+- Docker-compatible OCI images published to GitHub Container Registry
+
 ## Product constraints
 
 - Anonymous users can import and read personal EPUBs without this service.
@@ -20,6 +36,19 @@ one application and one PostgreSQL database with explicit module ownership.
 `accounts`, `catalog`, `content`, `commerce`, `entitlements`, `notifications`, `publishers`,
 `administration`, and `audit` are the intended business boundaries. Cross-module access must use a
 published internal API or domain event rather than another module's repository or tables.
+
+These modules collectively provide email/password accounts and revocable sessions, catalog and
+publisher metadata, orders and payment processing, entitlement decisions, protected book delivery,
+transactional notifications, publisher and administrative operations, and security-relevant audit
+events.
+
+## Related resources
+
+- [Frontend repository](https://github.com/SamsterZero/Granthalay)
+- [Architecture](docs/architecture.md)
+- [API conventions](docs/api-conventions.md)
+- [Security policy](SECURITY.md)
+- [Granthalay roadmap](https://github.com/users/SamsterZero/projects/5)
 
 ## Source of truth
 
