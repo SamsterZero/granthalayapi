@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/SamsterZero/granthalayapi/security/advisories/new
+    about: Report security issues privately.
+  - name: Frontend issue
+    url: https://github.com/SamsterZero/Granthalay/issues
+    about: Report reader, PWA, EPUB rendering, and local-library issues in the frontend repository.
