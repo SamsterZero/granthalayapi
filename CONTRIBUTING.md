@@ -29,8 +29,8 @@ Start the application:
 The development database is defined in `compose.yaml` and may be started explicitly with
 `docker compose up -d postgres`. Keep credentials local; `.env` files are ignored.
 
-The API defaults to `http://localhost:8080`. Swagger UI is available at `/swagger-ui.html` as
-endpoints are introduced.
+The API defaults to `http://localhost:8080`. Health probes are available under `/actuator/health`.
+Swagger UI and other routes remain denied until their access policies are introduced.
 
 ## Validate a change
 
@@ -49,8 +49,26 @@ Build the application image locally with:
 docker build -t granthalay-api:dev .
 ```
 
-The container requires a reachable PostgreSQL database and runtime configuration. Never bake secrets
-into an image. Release automation publishes multi-architecture images to
+With Python 3 available, check the image against an isolated Compose database:
+
+```sh
+python3 scripts/check-container.py --engine podman --image granthalay-api:dev
+```
+
+Use `--engine docker` for Docker. The check verifies startup and probe behavior during a database
+outage, then removes its test containers, network, and volume. It does not use your development database.
+
+The container requires a reachable PostgreSQL database. Set `SPRING_DATASOURCE_URL` to its JDBC URL,
+`SPRING_DATASOURCE_USERNAME`, and `SPRING_DATASOURCE_PASSWORD` at runtime. Never bake secrets
+into an image. For example, after exporting these variables locally:
+
+```sh
+podman run --rm -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL -e SPRING_DATASOURCE_USERNAME -e SPRING_DATASOURCE_PASSWORD \
+  granthalay-api:dev
+```
+
+Release automation publishes multi-architecture images to
 `ghcr.io/samsterzero/granthalayapi`.
 
 ## Database changes
