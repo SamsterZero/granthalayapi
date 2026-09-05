@@ -62,7 +62,7 @@ flowchart TD
 - [x] Multi-architecture container build and OCI Kubernetes (OKE) & Compute deployment (Issue #18).
 
 ### Phase 2: User Accounts & Catalog Metadata
-- [ ] Implement `identity` module: User sign-up, sign-in, session revocation.
+- [x] Implement `identity` module: User sign-up, email verification, sign-in, session management (Issue #5).
 - [ ] Implement `catalog` module: Book search, author metadata, public listings.
 
 ### Phase 3: Commerce & Entitlements
