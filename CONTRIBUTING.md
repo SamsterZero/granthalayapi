@@ -5,7 +5,8 @@ privacy-first behavior of the companion reader.
 
 ## Before starting
 
-- Read the [Project Guide](PROJECT.md) and [architecture](docs/architecture.md).
+- Read the [Project Guide](PROJECT.md) and [architecture](docs/03-architecture.md).
+
 - Search [existing issues](https://github.com/SamsterZero/granthalayapi/issues).
 - Discuss new modules, breaking API changes, authentication, payment flows, or persistence redesigns
   before implementing them.
