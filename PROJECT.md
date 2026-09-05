@@ -7,8 +7,8 @@ one application and one PostgreSQL database with explicit module ownership.
 ## Status
 
 The project is at the foundation stage. The application skeleton, local PostgreSQL environment,
-container image, documentation, and CI automation are present; public API endpoints and product
-modules are not implemented yet.
+container image, documentation, and CI automation are present. The foundation module boundaries are
+declared and verified; public API endpoints and product use cases are not implemented yet.
 
 ## Technology
 
@@ -33,8 +33,8 @@ modules are not implemented yet.
 
 ## Intended modules
 
-`accounts`, `catalog`, `content`, `commerce`, `entitlements`, `notifications`, `publishers`,
-`administration`, and `audit` are the intended business boundaries. Cross-module access must use a
+`identity`, `catalog`, `publishing`, `storage`, `commerce`, `entitlements`, `delivery`, and
+`operations` are the foundation boundaries specified by issue #2. Cross-module access must use a
 published internal API or domain event rather than another module's repository or tables.
 
 These modules collectively provide email/password accounts and revocable sessions, catalog and

@@ -23,6 +23,15 @@ their schemas or tables. External providers are replaceable adapters at the appl
 
 ## Module rules
 
+Issue #2 defines eight foundation packages: `identity`, `catalog`, `publishing`, `storage`,
+`commerce`, `entitlements`, `delivery`, and `operations`. Identity covers accounts, publishing covers
+publishers, and storage and delivery separate content infrastructure from protected access.
+Operations reserves the boundary for operational concerns; finer boundaries can follow their use cases.
+
+Each package declares an empty dependency allowlist. Add dependencies explicitly when introducing a
+published application API or event collaboration. `ModuleArchitectureTests` checks the module inventory,
+verifies the application, and confirms that a deliberately forbidden dependency is rejected.
+
 - Each business module owns its domain model, persistence, and migrations.
 - Other modules interact through explicit application APIs or domain events.
 - Code outside a module cannot access that module's repositories or persistence entities.
