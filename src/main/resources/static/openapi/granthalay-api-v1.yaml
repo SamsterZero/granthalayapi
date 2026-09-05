@@ -1,0 +1,157 @@
+openapi: 3.1.0
+info:
+  title: Granthalay API
+  version: v1
+  description: |-
+    Contract for optional connected Granthalay features. The local-only reader does not depend on
+    this API. New fields may be added to responses without a version change; clients must ignore
+    unknown fields. Removing or renaming fields, changing their meaning, or tightening accepted
+    input requires a new API version or a documented migration window.
+servers:
+  - url: /
+tags:
+  - name: Contract
+    description: API discovery and contract metadata.
+paths:
+  /api/v1:
+    get:
+      tags: [Contract]
+      operationId: getApiIndex
+      summary: Discover the current API contract
+      security: []
+      responses:
+        '200':
+          description: Version and OpenAPI document location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiIndex'
+        '500':
+          $ref: '#/components/responses/Problem'
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: SESSION
+      description: Revocable browser session. Browser requests include credentials.
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Zero-based page number.
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    Size:
+      name: size
+      in: query
+      description: Requested page size, capped by the endpoint.
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 20
+  responses:
+    Problem:
+      description: Request failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    ValidationProblem:
+      description: Request validation failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/ValidationProblem'
+  schemas:
+    ApiIndex:
+      type: object
+      additionalProperties: false
+      required: [name, version, openapi]
+      properties:
+        name:
+          type: string
+          example: Granthalay API
+        version:
+          type: string
+          const: v1
+        openapi:
+          type: string
+          format: uri-reference
+          example: /openapi/granthalay-api-v1.yaml
+    PageMetadata:
+      type: object
+      additionalProperties: false
+      required: [page, size, totalElements, totalPages]
+      properties:
+        page:
+          type: integer
+          format: int32
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          minimum: 1
+        totalElements:
+          type: integer
+          format: int64
+          minimum: 0
+        totalPages:
+          type: integer
+          format: int32
+          minimum: 0
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          default: about:blank
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        requestId:
+          type: string
+          description: Safe correlation identifier when one is available.
+    ValidationProblem:
+      allOf:
+        - $ref: '#/components/schemas/Problem'
+        - type: object
+          required: [errors]
+          properties:
+            errors:
+              type: array
+              items:
+                $ref: '#/components/schemas/FieldError'
+    FieldError:
+      type: object
+      additionalProperties: false
+      required: [field, code, message]
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+          description: Stable machine-readable validation code.
+        message:
+          type: string
+          description: Safe human-readable explanation; rejected values are omitted.

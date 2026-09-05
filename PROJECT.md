@@ -9,7 +9,8 @@ one application and one PostgreSQL database with explicit module ownership.
 The backend foundation has verified module boundaries, Flyway-managed infrastructure tables,
 restricted health probes, and a separately deployable container. CI checks Java formatting, unit and
 module tests, PostgreSQL integration tests, and container startup; pull requests also receive dependency
-review. Public API endpoints and product use cases are not implemented yet.
+review. The versioned API contract and discovery endpoint are published; product use cases are not
+implemented yet.
 
 ## Technology
 

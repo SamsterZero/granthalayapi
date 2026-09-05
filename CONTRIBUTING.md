@@ -40,7 +40,11 @@ SPRING_DATASOURCE_PASSWORD=granthalay ./mvnw spring-boot:run
 ```
 
 The API defaults to `http://localhost:8080`. Health probes are available under `/actuator/health`.
-Swagger UI and other routes remain denied until their access policies are introduced.
+API discovery is available at `/api/v1`, the OpenAPI source of truth at
+`/openapi/granthalay-api-v1.yaml`; dynamic Springdoc and Swagger UI routes remain denied.
+
+`./mvnw generate-test-resources` validates the OpenAPI document and generates a Fetch-based
+TypeScript client under `target/generated-clients/typescript`.
 
 ## Validate a change
 
