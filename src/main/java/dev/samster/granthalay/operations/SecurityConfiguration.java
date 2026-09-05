@@ -32,7 +32,8 @@ class SecurityConfiguration {
 			.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 				.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
 				.ignoringRequestMatchers("/api/v1/auth/register", "/api/v1/auth/verify-email", "/api/v1/auth/sign-in",
-						"/api/v1/auth/sign-out", "/api/v1/auth/revoke-sessions"))
+						"/api/v1/auth/sign-out", "/api/v1/auth/revoke-sessions", "/api/v1/auth/request-password-reset",
+						"/api/v1/auth/reset-password"))
 			.requestCache(cache -> cache.disable())
 			.sessionManagement(session -> session.sessionFixation(fixation -> fixation.changeSessionId()))
 			.logout(logout -> logout.disable())
@@ -42,7 +43,8 @@ class SecurityConfiguration {
 						"/actuator/health/readiness", "/api/v1", "/openapi/granthalay-api-v1.yaml")
 				.permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/verify-email",
-						"/api/v1/auth/sign-in", "/api/v1/auth/sign-out")
+						"/api/v1/auth/sign-in", "/api/v1/auth/sign-out", "/api/v1/auth/request-password-reset",
+						"/api/v1/auth/reset-password")
 				.permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/v1/auth/me")
 				.authenticated()
