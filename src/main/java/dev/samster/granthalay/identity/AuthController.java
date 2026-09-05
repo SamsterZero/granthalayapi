@@ -29,16 +29,24 @@ public class AuthController {
 
 	private final RevokeUserSessionsUseCase revokeUserSessionsUseCase;
 
+	private final RequestPasswordResetUseCase requestPasswordResetUseCase;
+
+	private final ResetPasswordUseCase resetPasswordUseCase;
+
 	private final UserAccountRepository accountRepository;
 
 	public AuthController(RegisterAccountUseCase registerAccountUseCase, VerifyEmailUseCase verifyEmailUseCase,
 			SignInUseCase signInUseCase, SignOutUseCase signOutUseCase,
-			RevokeUserSessionsUseCase revokeUserSessionsUseCase, UserAccountRepository accountRepository) {
+			RevokeUserSessionsUseCase revokeUserSessionsUseCase,
+			RequestPasswordResetUseCase requestPasswordResetUseCase, ResetPasswordUseCase resetPasswordUseCase,
+			UserAccountRepository accountRepository) {
 		this.registerAccountUseCase = registerAccountUseCase;
 		this.verifyEmailUseCase = verifyEmailUseCase;
 		this.signInUseCase = signInUseCase;
 		this.signOutUseCase = signOutUseCase;
 		this.revokeUserSessionsUseCase = revokeUserSessionsUseCase;
+		this.requestPasswordResetUseCase = requestPasswordResetUseCase;
+		this.resetPasswordUseCase = resetPasswordUseCase;
 		this.accountRepository = accountRepository;
 	}
 
@@ -76,6 +84,19 @@ public class AuthController {
 		revokeUserSessionsUseCase.execute(principal.getName());
 	}
 
+	@PostMapping("/request-password-reset")
+	public ResponseEntity<MessageResponse> requestPasswordReset(
+			@Valid @RequestBody RequestPasswordResetRequest request) {
+		MessageResponse response = requestPasswordResetUseCase.execute(request);
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+	}
+
+	@PostMapping("/reset-password")
+	public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+		MessageResponse response = resetPasswordUseCase.execute(request);
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/me")
 	public ResponseEntity<AccountResponse> getCurrentAccount(Principal principal) {
 		if (principal == null || principal.getName() == null) {
@@ -86,6 +107,16 @@ public class AuthController {
 		var response = new AccountResponse(account.getId(), account.getEmail(), account.getStatus(),
 				account.getCreatedAt());
 		return ResponseEntity.ok(response);
+	}
+
+	@org.springframework.web.bind.annotation.ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<org.springframework.http.ProblemDetail> handleIllegalArgumentException(
+			IllegalArgumentException ex) {
+		var problem = org.springframework.http.ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+				ex.getMessage());
+		problem.setType(java.net.URI.create("about:blank"));
+		problem.setTitle("Bad Request");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
 	}
 
 }
