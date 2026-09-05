@@ -97,10 +97,11 @@ class PasswordResetIT {
 		var meResAfterReset = client.send(meReq, HttpResponse.BodyHandlers.ofString());
 		assertThat(meResAfterReset.statusCode()).isEqualTo(403);
 
-		// 7. Old password sign-in must fail (401 Unauthorized)
+		// 7. Old password sign-in must fail (403 Forbidden via security
+		// authenticationEntryPoint)
 		var postResetClient = HttpClient.newBuilder().cookieHandler(new CookieManager()).build();
 		var signInOldRes2 = postResetClient.send(signInOldReq, HttpResponse.BodyHandlers.ofString());
-		assertThat(signInOldRes2.statusCode()).isEqualTo(401);
+		assertThat(signInOldRes2.statusCode()).isEqualTo(403);
 
 		// 8. New password sign-in must succeed (200 OK)
 		var signInNewBody = "{\"email\":\"" + email + "\",\"password\":\"" + newPassword + "\"}";
