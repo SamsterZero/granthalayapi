@@ -17,9 +17,8 @@ notifications, publisher operations, administration, and auditing.
 
 ## Deployment model
 
-The backend is a Spring Modulith modular monolith. It is built as one OCI image and deployed
-separately from the GitHub Pages frontend. Initially, modules share one PostgreSQL instance but own
-their schemas or tables. External providers are replaceable adapters at the application boundary.
+The backend is a Spring Modulith modular monolith. It is built as a multi-architecture OCI image (`linux/amd64`, `linux/arm64`) and deployed separately from the GitHub Pages frontend. Deployment targets include OCI Kubernetes (OKE) via `k8s/` manifests and OCI Compute VMs via `compose.yaml`. Public ingress is restricted to HTTPS; PostgreSQL and Spring Boot containers run on private internal networks. Complete deployment, secret rotation, and rollback procedures are documented in [docs/deployment.md](deployment.md).
+
 
 ## Module rules
 
