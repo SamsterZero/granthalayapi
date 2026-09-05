@@ -30,7 +30,9 @@ class SecurityConfiguration {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
 			.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-				.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+				.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+				.ignoringRequestMatchers("/api/v1/auth/register", "/api/v1/auth/verify-email", "/api/v1/auth/sign-in",
+						"/api/v1/auth/sign-out"))
 			.requestCache(cache -> cache.disable())
 			.logout(logout -> logout.disable())
 			.cors(Customizer.withDefaults())
