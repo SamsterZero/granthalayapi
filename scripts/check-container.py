@@ -52,7 +52,10 @@ def main():
         deadline = time.monotonic() + 60
         while True:
             if run([args.engine, "inspect", "--format", "{{.State.Running}}", application]) != "true":
-                raise RuntimeError("Application container exited before becoming ready")
+                logs = run([args.engine, "logs", application])
+                raise RuntimeError(
+                    "Application container exited before becoming ready:\n" + logs
+                )
             try:
                 if health(port, "/actuator/health/readiness") == (200, {"status": "UP"}):
                     break
