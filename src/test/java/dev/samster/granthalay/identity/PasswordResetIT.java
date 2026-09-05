@@ -113,7 +113,7 @@ class PasswordResetIT {
 		assertThat(signInNewRes.statusCode()).isEqualTo(200);
 
 		// 9. Reusing token must fail (400 Bad Request)
-		var reuseResetRes = client.send(resetReq, HttpResponse.BodyHandlers.ofString());
+		var reuseResetRes = postResetClient.send(resetReq, HttpResponse.BodyHandlers.ofString());
 		assertThat(reuseResetRes.statusCode()).isEqualTo(400);
 	}
 
