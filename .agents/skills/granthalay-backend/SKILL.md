@@ -5,7 +5,8 @@ description: Implement or refactor Granthalay API modules, application use cases
 
 # Granthalay backend development
 
-Read `PROJECT.md`, `docs/architecture.md`, and `docs/api-conventions.md` before changing behavior.
+Read `PROJECT.md`, `docs/03-architecture.md`, and `docs/04-api-conventions.md` before changing behavior.
+
 Inspect the companion frontend only when its current contract or behavior materially affects the task.
 
 ## Preserve product boundaries

@@ -47,10 +47,12 @@ events.
 ## Related resources
 
 - [Frontend repository](https://github.com/SamsterZero/Granthalay)
-- [Architecture](docs/architecture.md)
-- [API conventions](docs/api-conventions.md)
+- [Architecture](docs/03-architecture.md)
+- [API conventions](docs/04-api-conventions.md)
+- [Deployment guide](docs/06-deployment.md)
 - [Security policy](SECURITY.md)
 - [Granthalay roadmap](https://github.com/users/SamsterZero/projects/5)
+
 
 ## Source of truth
 
