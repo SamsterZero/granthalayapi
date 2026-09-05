@@ -40,7 +40,8 @@ class SecurityConfiguration {
 			.cors(Customizer.withDefaults())
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/liveness",
-						"/actuator/health/readiness", "/api/v1", "/openapi/granthalay-api-v1.yaml")
+						"/actuator/health/readiness", "/api/v1", "/openapi/granthalay-api-v1.yaml",
+						"/api/v1/catalog/**")
 				.permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/verify-email",
 						"/api/v1/auth/sign-in", "/api/v1/auth/sign-out", "/api/v1/auth/request-password-reset",
