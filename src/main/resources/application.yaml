@@ -1,3 +1,17 @@
 spring:
   application:
     name: granthalay
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  sql:
+    init:
+      mode: never
+  session:
+    jdbc:
+      initialize-schema: never
+  flyway:
+    clean-disabled: true
+  modulith:
+    events:
+      completion-mode: update

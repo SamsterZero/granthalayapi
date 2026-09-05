@@ -39,6 +39,21 @@ verifies the application, and confirms that a deliberately forbidden dependency 
 - Provider-specific types do not cross adapter boundaries.
 - Modulith verification tests must accompany newly introduced modules.
 
+## Database schema ownership
+
+Flyway is the sole schema writer. Migrations live in `src/main/resources/db/migration` and use
+globally ordered versions with the owning module in the filename. `V1` creates identity's Spring
+Session tables; `V2` creates operations' Spring Modulith JPA publication registry. Event completion
+uses update mode; changing that mode may require an additional migration.
+
+Hibernate validates mappings at startup. SQL script and Spring Session schema initializers are
+disabled, and Flyway clean is disabled. Add forward-only migrations for future schema changes.
+Integration tests use PostgreSQL 18, matching Compose, and exercise session and event persistence.
+
+Compose mounts PostgreSQL 18 data at `/var/lib/postgresql`. If an existing local database used the
+previous `/var/lib/postgresql/data` mount, back it up and migrate its data before switching mounts;
+do not delete a volume containing needed data.
+
 ## Security and privacy boundaries
 
 The production frontend origin is `https://samsterzero.github.io`; allowed origins must be explicit
