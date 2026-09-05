@@ -32,7 +32,7 @@ class SecurityConfiguration {
 			.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 				.csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
 				.ignoringRequestMatchers("/api/v1/auth/register", "/api/v1/auth/verify-email", "/api/v1/auth/sign-in",
-						"/api/v1/auth/sign-out"))
+						"/api/v1/auth/sign-out", "/api/v1/auth/revoke-sessions"))
 			.requestCache(cache -> cache.disable())
 			.sessionManagement(session -> session.sessionFixation(fixation -> fixation.changeSessionId()))
 			.logout(logout -> logout.disable())
