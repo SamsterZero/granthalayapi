@@ -2,6 +2,7 @@ spring:
   application:
     name: granthalay
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: validate
   sql:
@@ -15,3 +16,27 @@ spring:
   modulith:
     events:
       completion-mode: update
+  mvc:
+    problemdetails:
+      enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
