@@ -63,6 +63,7 @@ flowchart TD
 
 ### Phase 2: User Accounts & Catalog Metadata
 - [x] Implement `identity` module: User sign-up, email verification, sign-in, session management (Issue #5).
+- [x] Implement secure cookie sessions, session rotation, and multi-device revocation (Issue #6).
 - [ ] Implement `catalog` module: Book search, author metadata, public listings.
 
 ### Phase 3: Commerce & Entitlements
