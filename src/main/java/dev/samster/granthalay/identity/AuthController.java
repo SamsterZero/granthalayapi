@@ -109,4 +109,14 @@ public class AuthController {
 		return ResponseEntity.ok(response);
 	}
 
+	@org.springframework.web.bind.annotation.ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<org.springframework.http.ProblemDetail> handleIllegalArgumentException(
+			IllegalArgumentException ex) {
+		var problem = org.springframework.http.ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+				ex.getMessage());
+		problem.setType(java.net.URI.create("about:blank"));
+		problem.setTitle("Bad Request");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problem);
+	}
+
 }
