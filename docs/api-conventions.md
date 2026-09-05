@@ -2,6 +2,10 @@
 
 These rules apply as HTTP endpoints are introduced.
 
+The foundation has no public `/api/v1` endpoints yet. Only GET health, liveness, and readiness probes
+under `/actuator/health` are accessible. Other routes, including OpenAPI and Swagger UI, return a
+generic 403 Problem Details response until their access policies are explicitly introduced.
+
 ## URLs and media types
 
 - Public endpoints live below `/api/v1`.

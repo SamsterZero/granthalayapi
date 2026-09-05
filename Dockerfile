@@ -9,7 +9,7 @@ RUN chmod +x mvnw && ./mvnw --batch-mode --no-transfer-progress dependency:go-of
 
 COPY src/ src/
 RUN ./mvnw --batch-mode --no-transfer-progress -DskipTests package \
-    && java -Djarmode=tools -jar target/*.jar extract --layers --destination target/extracted
+    && java -Djarmode=tools -jar target/*.jar extract --layers --destination target/extracted --application-filename application.jar
 
 FROM docker.io/library/eclipse-temurin:25-jre-alpine
 RUN addgroup -S granthalay && adduser -S granthalay -G granthalay
@@ -22,4 +22,4 @@ COPY --from=build --chown=granthalay:granthalay /workspace/target/extracted/appl
 
 USER granthalay
 EXPOSE 8080
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "-jar", "application.jar"]
