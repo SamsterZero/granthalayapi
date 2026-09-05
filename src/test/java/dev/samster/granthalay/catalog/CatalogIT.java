@@ -51,16 +51,15 @@ class CatalogIT {
 		client = HttpClient.newHttpClient();
 		titleSlug = "the-god-of-small-things-" + System.currentTimeMillis();
 
-		var contributor = manageCatalogUseCase.createContributor("Arundhati Roy",
+		var contributorId = manageCatalogUseCase.createContributor("Arundhati Roy",
 				"Indian author and political activist.");
-		var title = manageCatalogUseCase.createTitle(titleSlug, "The God of Small Things", "A Novel",
+		var titleId = manageCatalogUseCase.createTitle(titleSlug, "The God of Small Things", "A Novel",
 				"A story about the childhood experiences of fraternal twins...", "en");
 
-		manageCatalogUseCase.addContributorToTitle(title.getId(), contributor.getId(), ContributorRole.AUTHOR, 1);
+		manageCatalogUseCase.addContributorToTitle(titleId, contributorId, ContributorRole.AUTHOR, 1);
 
-		var edition = manageCatalogUseCase.addEdition(title.getId(), "9780679457312", EditionFormat.EPUB, 1, null,
+		editionId = manageCatalogUseCase.addEdition(titleId, "9780679457312", EditionFormat.EPUB, 1, null,
 				LocalDate.of(1997, 4, 4), EditionStatus.PUBLISHED);
-		editionId = edition.getId();
 
 		manageCatalogUseCase.setPrice(editionId, "USD", 1499, "GLOBAL");
 		manageCatalogUseCase.setPrice(editionId, "INR", 49900, "IN");

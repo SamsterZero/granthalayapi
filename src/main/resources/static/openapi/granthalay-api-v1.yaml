@@ -16,6 +16,8 @@ tags:
     description: User account registration, email verification, and session sign-in.
   - name: Catalog
     description: Book catalog metadata, titles, editions, and availability.
+  - name: Publishing
+    description: Publisher onboarding, submission review, release publishing, withdrawal, and replacement.
 paths:
   /api/v1:
     get:
@@ -268,6 +270,220 @@ paths:
               schema:
                 $ref: '#/components/schemas/CatalogEditionResponse'
         '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/submissions:
+    post:
+      tags: [Publishing]
+      operationId: submitEdition
+      summary: Submit a catalog edition for publisher review
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitEditionRequest'
+      responses:
+        '201':
+          description: Submission created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/submissions/{submissionId}/review:
+    post:
+      tags: [Publishing]
+      operationId: reviewSubmission
+      summary: Approve or reject a submitted edition
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewSubmissionRequest'
+      responses:
+        '200':
+          description: Submission review recorded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/submissions/{submissionId}/publish:
+    post:
+      tags: [Publishing]
+      operationId: publishRelease
+      summary: Publish or schedule a release for an approved edition
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishReleaseRequest'
+      responses:
+        '200':
+          description: Release published or scheduled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/submissions/{submissionId}/withdraw:
+    post:
+      tags: [Publishing]
+      operationId: withdrawRelease
+      summary: Withdraw a published or scheduled edition release
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawReleaseRequest'
+      responses:
+        '200':
+          description: Release withdrawn.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '409':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/submissions/{submissionId}/replace:
+    post:
+      tags: [Publishing]
+      operationId: replaceEdition
+      summary: Replace an edition version in a submission
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplaceEditionRequest'
+      responses:
+        '200':
+          description: Edition replaced.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmissionResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/editions/{editionId}/availability:
+    put:
+      tags: [Publishing]
+      operationId: updateAvailability
+      summary: Update territory availability for an edition
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: editionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAvailabilityRequest'
+      responses:
+        '200':
+          description: Territory availability updated.
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/submissions/{submissionId}/history:
+    get:
+      tags: [Publishing]
+      operationId: getSubmissionHistory
+      summary: Fetch audit log history for a submission
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: submissionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of audit log history events.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublishingAuditEventResponse'
+        '401':
           $ref: '#/components/responses/Problem'
         '500':
           $ref: '#/components/responses/Problem'
@@ -615,4 +831,121 @@ components:
         totalPages:
           type: integer
           format: int32
+    SubmitEditionRequest:
+      type: object
+      additionalProperties: false
+      required: [publisherId, editionId, title]
+      properties:
+        publisherId:
+          type: string
+        editionId:
+          type: string
+        title:
+          type: string
+        isbn:
+          type: string
+    ReviewSubmissionRequest:
+      type: object
+      additionalProperties: false
+      required: [approve, reviewedBy]
+      properties:
+        approve:
+          type: boolean
+        rejectionReason:
+          type: string
+        reviewedBy:
+          type: string
+    PublishReleaseRequest:
+      type: object
+      additionalProperties: false
+      required: [performedBy]
+      properties:
+        scheduledAt:
+          type: string
+          format: date-time
+        performedBy:
+          type: string
+    WithdrawReleaseRequest:
+      type: object
+      additionalProperties: false
+      required: [reason, performedBy]
+      properties:
+        reason:
+          type: string
+        performedBy:
+          type: string
+    ReplaceEditionRequest:
+      type: object
+      additionalProperties: false
+      required: [newEditionId, performedBy]
+      properties:
+        newEditionId:
+          type: string
+        performedBy:
+          type: string
+    UpdateAvailabilityRequest:
+      type: object
+      additionalProperties: false
+      required: [territory, isAvailable, performedBy]
+      properties:
+        territory:
+          type: string
+        availableFrom:
+          type: string
+          format: date-time
+        availableUntil:
+          type: string
+          format: date-time
+        isAvailable:
+          type: boolean
+        performedBy:
+          type: string
+    SubmissionResponse:
+      type: object
+      additionalProperties: false
+      required: [id, publisherId, editionId, title, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        publisherId:
+          type: string
+        editionId:
+          type: string
+        title:
+          type: string
+        isbn:
+          type: string
+        status:
+          type: string
+        rejectionReason:
+          type: string
+        scheduledAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    PublishingAuditEventResponse:
+      type: object
+      additionalProperties: false
+      required: [id, submissionId, publisherId, action, performedBy, createdAt]
+      properties:
+        id:
+          type: string
+        submissionId:
+          type: string
+        publisherId:
+          type: string
+        action:
+          type: string
+        performedBy:
+          type: string
+        details:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
 
