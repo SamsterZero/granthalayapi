@@ -34,6 +34,7 @@ class SecurityConfiguration {
 				.ignoringRequestMatchers("/api/v1/auth/register", "/api/v1/auth/verify-email", "/api/v1/auth/sign-in",
 						"/api/v1/auth/sign-out"))
 			.requestCache(cache -> cache.disable())
+			.sessionManagement(session -> session.sessionFixation(fixation -> fixation.changeSessionId()))
 			.logout(logout -> logout.disable())
 			.cors(Customizer.withDefaults())
 			.authorizeHttpRequests(requests -> requests
@@ -44,6 +45,8 @@ class SecurityConfiguration {
 						"/api/v1/auth/sign-in", "/api/v1/auth/sign-out")
 				.permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/v1/auth/me")
+				.authenticated()
+				.requestMatchers(HttpMethod.POST, "/api/v1/auth/revoke-sessions")
 				.authenticated()
 				.anyRequest()
 				.denyAll())
