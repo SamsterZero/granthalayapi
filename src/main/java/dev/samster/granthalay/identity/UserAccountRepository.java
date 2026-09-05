@@ -12,6 +12,8 @@ interface UserAccountRepository extends JpaRepository<UserAccount, String> {
 
 	Optional<UserAccount> findByVerificationToken(String verificationToken);
 
+	Optional<UserAccount> findByPasswordResetToken(String passwordResetToken);
+
 	boolean existsByEmailIgnoreCase(String email);
 
 }

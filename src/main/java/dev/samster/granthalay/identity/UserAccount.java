@@ -40,6 +40,12 @@ class UserAccount {
 	@Column(name = "verification_token_expiry")
 	private Instant verificationTokenExpiry;
 
+	@Column(name = "password_reset_token")
+	private String passwordResetToken;
+
+	@Column(name = "password_reset_token_expiry")
+	private Instant passwordResetTokenExpiry;
+
 	@Column(name = "created_at", nullable = false)
 	private Instant createdAt;
 
@@ -56,6 +62,19 @@ class UserAccount {
 		this.verificationTokenExpiry = verificationTokenExpiry;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+	}
+
+	void createPasswordResetToken(String token, Instant expiry) {
+		this.passwordResetToken = token;
+		this.passwordResetTokenExpiry = expiry;
+		this.updatedAt = Instant.now();
+	}
+
+	void updatePasswordHash(String newPasswordHash) {
+		this.passwordHash = newPasswordHash;
+		this.passwordResetToken = null;
+		this.passwordResetTokenExpiry = null;
+		this.updatedAt = Instant.now();
 	}
 
 }

@@ -10,4 +10,9 @@ class NoOpEmailDeliveryProvider implements EmailDeliveryProvider {
 		// Development and test fallback adapter.
 	}
 
+	@Override
+	public void sendPasswordResetEmail(String toEmail, String resetToken) {
+		// Development and test fallback adapter.
+	}
+
 }
