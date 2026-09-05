@@ -43,6 +43,11 @@ public class SignInUseCase {
 			throw new BadCredentialsException("Account is not active");
 		}
 
+		var session = httpRequest.getSession(false);
+		if (session != null) {
+			httpRequest.changeSessionId();
+		}
+
 		var auth = new UsernamePasswordAuthenticationToken(account.getEmail(), null,
 				List.of(new SimpleGrantedAuthority("ROLE_USER")));
 		var securityContext = SecurityContextHolder.createEmptyContext();
