@@ -12,6 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,13 +25,19 @@ class SecurityConfiguration {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http.requestCache(cache -> cache.disable())
+		return http.csrf(csrf -> csrf.disable())
+			.requestCache(cache -> cache.disable())
 			.logout(logout -> logout.disable())
 			.cors(Customizer.withDefaults())
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/liveness",
 						"/actuator/health/readiness", "/api/v1", "/openapi/granthalay-api-v1.yaml")
 				.permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/verify-email",
+						"/api/v1/auth/sign-in", "/api/v1/auth/sign-out")
+				.permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/v1/auth/me")
+				.authenticated()
 				.anyRequest()
 				.denyAll())
 			.exceptionHandling(
@@ -54,8 +62,12 @@ class SecurityConfiguration {
 	}
 
 	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(12);
+	}
+
+	@Bean
 	UserDetailsService userDetailsService() {
-		// No default account or generated password before identity is implemented.
 		return new InMemoryUserDetailsManager();
 	}
 
