@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: granthalay-api
+  labels:
+    app.kubernetes.io/name: granthalay-api
+    app.kubernetes.io/part-of: granthalay
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    app.kubernetes.io/name: granthalay-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: granthalay-api
+  labels:
+    app.kubernetes.io/name: granthalay-api
+    app.kubernetes.io/part-of: granthalay
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: granthalay-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: granthalay-api
+        app.kubernetes.io/part-of: granthalay
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: granthalay-api
+          image: ghcr.io/samsterzero/granthalayapi:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          envFrom:
+            - configMapRef:
+                name: granthalay-config
+          env:
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: granthalay-secret
+                  key: SPRING_DATASOURCE_USERNAME
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: granthalay-secret
+                  key: SPRING_DATASOURCE_PASSWORD
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "250m"
+            limits:
+              memory: "768Mi"
+              cpu: "1000m"

@@ -1,0 +1,49 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deployment target (kubernetes or compute)'
+        required: true
+        default: 'kubernetes'
+        type: choice
+        options:
+          - kubernetes
+          - compute
+      image_tag:
+        description: 'OCI container image tag (e.g. latest, sha-xxxxxxx, or v0.1.0)'
+        required: true
+        default: 'latest'
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: deploy-${{ inputs.target }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to OCI (${{ inputs.target }})
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Validate Kubernetes Manifests
+        if: inputs.target == 'kubernetes'
+        run: |
+          kubectl apply --dry-run=client -f k8s/
+
+      - name: Validate Docker Compose Configuration
+        if: inputs.target == 'compute'
+        run: |
+          docker compose config --quiet
+
+      - name: Log Deployment Action
+        run: |
+          echo "Deploying Granthalay API tag '${{ inputs.image_tag }}' to OCI ${{ inputs.target }} target."
