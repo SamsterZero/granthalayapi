@@ -27,14 +27,18 @@ public class AuthController {
 
 	private final SignOutUseCase signOutUseCase;
 
+	private final RevokeUserSessionsUseCase revokeUserSessionsUseCase;
+
 	private final UserAccountRepository accountRepository;
 
 	public AuthController(RegisterAccountUseCase registerAccountUseCase, VerifyEmailUseCase verifyEmailUseCase,
-			SignInUseCase signInUseCase, SignOutUseCase signOutUseCase, UserAccountRepository accountRepository) {
+			SignInUseCase signInUseCase, SignOutUseCase signOutUseCase,
+			RevokeUserSessionsUseCase revokeUserSessionsUseCase, UserAccountRepository accountRepository) {
 		this.registerAccountUseCase = registerAccountUseCase;
 		this.verifyEmailUseCase = verifyEmailUseCase;
 		this.signInUseCase = signInUseCase;
 		this.signOutUseCase = signOutUseCase;
+		this.revokeUserSessionsUseCase = revokeUserSessionsUseCase;
 		this.accountRepository = accountRepository;
 	}
 
@@ -61,6 +65,15 @@ public class AuthController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void signOut(HttpServletRequest httpRequest) {
 		signOutUseCase.execute(httpRequest);
+	}
+
+	@PostMapping("/revoke-sessions")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void revokeAllSessions(Principal principal) {
+		if (principal == null || principal.getName() == null) {
+			throw new BadCredentialsException("Not authenticated");
+		}
+		revokeUserSessionsUseCase.execute(principal.getName());
 	}
 
 	@GetMapping("/me")
