@@ -17,17 +17,17 @@ class SecurityConfiguration {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		return http
-			.requestCache(cache -> cache.disable())
+		return http.requestCache(cache -> cache.disable())
 			.logout(logout -> logout.disable())
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/liveness",
 						"/actuator/health/readiness")
 				.permitAll()
-				.anyRequest().denyAll())
-			.exceptionHandling(errors -> errors
-				.authenticationEntryPoint((request, response, exception) -> forbidden(response))
-				.accessDeniedHandler((request, response, exception) -> forbidden(response)))
+				.anyRequest()
+				.denyAll())
+			.exceptionHandling(
+					errors -> errors.authenticationEntryPoint((request, response, exception) -> forbidden(response))
+						.accessDeniedHandler((request, response, exception) -> forbidden(response)))
 			.build();
 	}
 
@@ -40,9 +40,9 @@ class SecurityConfiguration {
 	private static void forbidden(HttpServletResponse response) throws IOException {
 		response.setStatus(403);
 		response.setContentType("application/problem+json");
-		response.getOutputStream().write(
-				"{\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403,\"detail\":\"Access is denied.\"}"
-					.getBytes(StandardCharsets.UTF_8));
+		response.getOutputStream()
+			.write("{\"type\":\"about:blank\",\"title\":\"Forbidden\",\"status\":403,\"detail\":\"Access is denied.\"}"
+				.getBytes(StandardCharsets.UTF_8));
 	}
 
 }

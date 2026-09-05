@@ -19,7 +19,8 @@ class ModuleArchitectureTests {
 
 	@Test
 	void rejectsForbiddenDependencies() {
-		// Include test classes for this deliberately invalid fixture outside the application.
+		// Include test classes for this deliberately invalid fixture outside the
+		// application.
 		assertThatThrownBy(() -> ApplicationModules.of("dev.samster.modulefixture", location -> true).verify())
 			.isInstanceOf(Violations.class)
 			.hasMessageContaining("Allowed targets: none");

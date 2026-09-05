@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class HealthEndpointTests {
+class HealthEndpointIT {
 
 	@LocalServerPort
 	int port;
@@ -75,7 +75,8 @@ class HealthEndpointTests {
 	private HttpResponse<String> request(String method, String path) throws Exception {
 		try (var client = HttpClient.newHttpClient()) {
 			return client.send(HttpRequest.newBuilder(URI.create("http://localhost:" + port + path))
-				.method(method, HttpRequest.BodyPublishers.noBody()).build(), HttpResponse.BodyHandlers.ofString());
+				.method(method, HttpRequest.BodyPublishers.noBody())
+				.build(), HttpResponse.BodyHandlers.ofString());
 		}
 	}
 

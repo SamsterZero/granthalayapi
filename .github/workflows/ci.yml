@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: ['**']
   workflow_dispatch:
 
 permissions:
@@ -30,3 +30,12 @@ jobs:
 
       - name: Verify
         run: ./mvnw --batch-mode --no-transfer-progress verify
+
+      - name: Validate Compose
+        run: docker compose config --quiet
+
+      - name: Build application image
+        run: docker build -t granthalay-api:ci .
+
+      - name: Check container startup and database outage
+        run: python3 scripts/check-container.py --engine docker --image granthalay-api:ci

@@ -6,9 +6,10 @@ one application and one PostgreSQL database with explicit module ownership.
 
 ## Status
 
-The project is at the foundation stage. The application skeleton, local PostgreSQL environment,
-container image, documentation, and CI automation are present. The foundation module boundaries are
-declared and verified; public API endpoints and product use cases are not implemented yet.
+The backend foundation has verified module boundaries, Flyway-managed infrastructure tables,
+restricted health probes, and a separately deployable container. CI checks Java formatting, unit and
+module tests, PostgreSQL integration tests, and container startup; pull requests also receive dependency
+review. Public API endpoints and product use cases are not implemented yet.
 
 ## Technology
 

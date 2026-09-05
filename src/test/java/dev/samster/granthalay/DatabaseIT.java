@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
-class GranthalayApplicationTests {
+class DatabaseIT {
 
 	@Autowired
 	Flyway flyway;
@@ -50,8 +50,8 @@ class GranthalayApplicationTests {
 		var session = repository.createSession();
 		session.setAttribute("test", "round-trip");
 		repository.save(session);
-		var primaryId = jdbc.queryForObject("select primary_id from spring_session where session_id = ?",
-				String.class, session.getId());
+		var primaryId = jdbc.queryForObject("select primary_id from spring_session where session_id = ?", String.class,
+				session.getId());
 		try {
 			assertThat(repository.findById(session.getId()).<String>getAttribute("test")).isEqualTo("round-trip");
 		}
@@ -60,7 +60,8 @@ class GranthalayApplicationTests {
 		}
 		assertThat(repository.findById(session.getId())).isNull();
 		assertThat(jdbc.queryForObject("select count(*) from spring_session_attributes where session_primary_id = ?",
-				Long.class, primaryId)).isZero();
+				Long.class, primaryId))
+			.isZero();
 	}
 
 	@Test
@@ -74,7 +75,8 @@ class GranthalayApplicationTests {
 		publications.markCompleted(publication.getIdentifier(), Instant.now());
 		assertThat(publications.findIncompletePublications()).isEmpty();
 		assertThat(jdbc.queryForObject("select count(*) from event_publication where completion_date is not null",
-				Long.class)).isEqualTo(1);
+				Long.class))
+			.isEqualTo(1);
 	}
 
 	public record TestEvent(String value) {

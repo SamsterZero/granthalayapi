@@ -13,7 +13,7 @@ privacy-first behavior of the companion reader.
 
 ## Local setup
 
-Install JDK 25 and Docker with Compose support, then fork and clone the repository:
+Install JDK 25 and Docker or Podman with Compose support, then fork and clone the repository:
 
 ```sh
 git clone https://github.com/<your-account>/granthalayapi.git
@@ -29,16 +29,40 @@ Start the application:
 The development database is defined in `compose.yaml` and may be started explicitly with
 `docker compose up -d postgres`. Keep credentials local; `.env` files are ignored.
 
+For Podman, start Compose explicitly and provide its connection settings:
+
+```sh
+podman compose up -d postgres
+SPRING_DOCKER_COMPOSE_ENABLED=false \
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/granthalay \
+SPRING_DATASOURCE_USERNAME=granthalay \
+SPRING_DATASOURCE_PASSWORD=granthalay ./mvnw spring-boot:run
+```
+
 The API defaults to `http://localhost:8080`. Health probes are available under `/actuator/health`.
 Swagger UI and other routes remain denied until their access policies are introduced.
 
 ## Validate a change
 
 ```sh
+./mvnw spring-javaformat:apply
 ./mvnw verify
 ```
 
-Tests use Testcontainers and require a working Docker daemon. Add focused tests for new behavior and
+`verify` validates Java formatting, runs unit and module tests with Surefire, then runs PostgreSQL and
+HTTP integration tests (`*IT`) with Failsafe. CI additionally builds and checks the container image;
+the dependency-review workflow checks dependency changes on pull requests.
+
+Tests use Testcontainers and require a working Docker-compatible daemon. For local rootless Podman:
+
+```sh
+systemctl --user start podman.socket
+DOCKER_HOST="unix://${XDG_RUNTIME_DIR}/podman/podman.sock" \
+TESTCONTAINERS_RYUK_DISABLED=true ./mvnw verify
+```
+
+Ryuk is disabled only for local rootless Podman; test containers close on normal JVM shutdown.
+After an interrupted run, check for leftover test containers. Add focused tests for new behavior and
 integration tests for persistence, security boundaries, migrations, and module interactions.
 
 ## Containers
