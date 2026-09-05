@@ -51,6 +51,8 @@ class SecurityConfiguration {
 				.authenticated()
 				.requestMatchers(HttpMethod.POST, "/api/v1/auth/revoke-sessions")
 				.authenticated()
+				.requestMatchers("/api/v1/publishing/**")
+				.authenticated()
 				.anyRequest()
 				.denyAll())
 			.exceptionHandling(

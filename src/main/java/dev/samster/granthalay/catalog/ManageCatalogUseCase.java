@@ -24,20 +24,20 @@ public class ManageCatalogUseCase {
 		this.editionRepository = editionRepository;
 	}
 
-	public ContributorEntity createContributor(String name, String bio) {
+	public String createContributor(String name, String bio) {
 		Instant now = Instant.now();
 		ContributorEntity contributor = new ContributorEntity(UUID.randomUUID().toString(), name, bio, now, now);
-		return contributorRepository.save(contributor);
+		return contributorRepository.save(contributor).getId();
 	}
 
-	public TitleEntity createTitle(String slug, String title, String subtitle, String description, String language) {
+	public String createTitle(String slug, String title, String subtitle, String description, String language) {
 		if (titleRepository.existsBySlug(slug)) {
 			throw new IllegalArgumentException("Title with slug '" + slug + "' already exists");
 		}
 		Instant now = Instant.now();
 		TitleEntity titleEntity = new TitleEntity(UUID.randomUUID().toString(), slug, title, subtitle, description,
 				language, now, now);
-		return titleRepository.save(titleEntity);
+		return titleRepository.save(titleEntity).getId();
 	}
 
 	public void addContributorToTitle(String titleId, String contributorId, ContributorRole role, int displayOrder) {
@@ -51,8 +51,8 @@ public class ManageCatalogUseCase {
 		titleRepository.save(title);
 	}
 
-	public EditionEntity addEdition(String titleId, String isbn, EditionFormat format, int editionNumber,
-			String publisherId, LocalDate publishedDate, EditionStatus status) {
+	public String addEdition(String titleId, String isbn, EditionFormat format, int editionNumber, String publisherId,
+			LocalDate publishedDate, EditionStatus status) {
 		TitleEntity title = titleRepository.findById(titleId)
 			.orElseThrow(() -> new IllegalArgumentException("Title not found: " + titleId));
 
@@ -65,7 +65,7 @@ public class ManageCatalogUseCase {
 				publisherId, publishedDate, status, now, now);
 		title.getEditions().add(edition);
 		titleRepository.save(title);
-		return edition;
+		return edition.getId();
 	}
 
 	public void setPrice(String editionId, String currency, long amountInCents, String territory) {
@@ -88,6 +88,14 @@ public class ManageCatalogUseCase {
 		EditionAvailabilityEntity availability = new EditionAvailabilityEntity(UUID.randomUUID().toString(), edition,
 				territory, availableFrom, availableUntil, isAvailable, now, now);
 		edition.getAvailability().add(availability);
+		editionRepository.save(edition);
+	}
+
+	public void updateEditionStatus(String editionId, EditionStatus status) {
+		EditionEntity edition = editionRepository.findById(editionId)
+			.orElseThrow(() -> new IllegalArgumentException("Edition not found: " + editionId));
+		edition.setStatus(status);
+		edition.setUpdatedAt(Instant.now());
 		editionRepository.save(edition);
 	}
 
