@@ -98,7 +98,8 @@ class PasswordResetIT {
 		assertThat(meResAfterReset.statusCode()).isEqualTo(403);
 
 		// 7. Old password sign-in must fail (401 Unauthorized)
-		var signInOldRes2 = client.send(signInOldReq, HttpResponse.BodyHandlers.ofString());
+		var postResetClient = HttpClient.newBuilder().cookieHandler(new CookieManager()).build();
+		var signInOldRes2 = postResetClient.send(signInOldReq, HttpResponse.BodyHandlers.ofString());
 		assertThat(signInOldRes2.statusCode()).isEqualTo(401);
 
 		// 8. New password sign-in must succeed (200 OK)
@@ -107,7 +108,7 @@ class PasswordResetIT {
 			.header("Content-Type", "application/json")
 			.POST(HttpRequest.BodyPublishers.ofString(signInNewBody))
 			.build();
-		var signInNewRes = client.send(signInNewReq, HttpResponse.BodyHandlers.ofString());
+		var signInNewRes = postResetClient.send(signInNewReq, HttpResponse.BodyHandlers.ofString());
 		assertThat(signInNewRes.statusCode()).isEqualTo(200);
 
 		// 9. Reusing token must fail (400 Bad Request)
