@@ -65,12 +65,16 @@ Logs are structured and redact credentials, tokens, payment data, book contents,
 Reading telemetry is not collected by default. Database migrations are forward-only after release,
 and uploaded content is treated as untrusted input.
 
-Only anonymous GET requests to `/actuator/health`, `/actuator/health/liveness`, and
-`/actuator/health/readiness` are permitted in the foundation. Probes expose status only; root health
-also lists the two probe groups. Readiness includes database connectivity and application availability;
-liveness does not depend on the database. Other routes return generic 403 Problem Details.
+Anonymous GET requests are limited to `/actuator/health`, `/actuator/health/liveness`,
+`/actuator/health/readiness`, `/api/v1`, and the published v1 OpenAPI document. Probes expose status
+only; root health also lists the two probe groups. Readiness includes database connectivity and
+application availability; liveness does not depend on the database. Other routes return generic 403
+Problem Details.
 There is no default account or generated password, denied requests are not saved in sessions,
 and CSRF protection remains enabled. Product endpoints require explicit access policies as introduced.
+
+Credentialed CORS is scoped to `/api/**`. Origins come from
+`GRANTHALAY_WEB_ALLOWED_ORIGINS`; wildcard origins are not accepted.
 
 ## Repository relationship
 

@@ -1,0 +1,64 @@
+openapi: 3.1.0
+paths:
+  /api/v1:
+    get:
+      responses:
+        '200': {}
+        '500': {}
+components:
+  schemas:
+    ApiIndex:
+      required: [name, version, openapi]
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        openapi:
+          type: string
+          format: uri-reference
+    PageMetadata:
+      required: [page, size, totalElements, totalPages]
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+    Problem:
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        requestId:
+          type: string
+    ValidationProblem:
+      required: []
+      properties: {}
+    FieldError:
+      required: [field, code, message]
+      properties:
+        field:
+          type: string
+        code:
+          type: string
+        message:
+          type: string

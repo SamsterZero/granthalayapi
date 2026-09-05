@@ -2,15 +2,21 @@ package dev.samster.granthalay.operations;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration(proxyBeanMethods = false)
 class SecurityConfiguration {
@@ -19,9 +25,10 @@ class SecurityConfiguration {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http.requestCache(cache -> cache.disable())
 			.logout(logout -> logout.disable())
+			.cors(Customizer.withDefaults())
 			.authorizeHttpRequests(requests -> requests
 				.requestMatchers(HttpMethod.GET, "/actuator/health", "/actuator/health/liveness",
-						"/actuator/health/readiness")
+						"/actuator/health/readiness", "/api/v1", "/openapi/granthalay-api-v1.yaml")
 				.permitAll()
 				.anyRequest()
 				.denyAll())
@@ -29,6 +36,21 @@ class SecurityConfiguration {
 					errors -> errors.authenticationEntryPoint((request, response, exception) -> forbidden(response))
 						.accessDeniedHandler((request, response, exception) -> forbidden(response)))
 			.build();
+	}
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource(
+			@Value("${granthalay.web.allowed-origins}") List<String> allowedOrigins) {
+		var configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(allowedOrigins);
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(List.of("Accept", "Content-Type", "Authorization", "X-Request-ID"));
+		configuration.setExposedHeaders(List.of("Location", "X-Request-ID"));
+		configuration.setAllowCredentials(true);
+		configuration.setMaxAge(3600L);
+		var source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/api/**", configuration);
+		return source;
 	}
 
 	@Bean

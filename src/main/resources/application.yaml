@@ -19,7 +19,6 @@ spring:
   mvc:
     problemdetails:
       enabled: true
-
 management:
   endpoints:
     web:
@@ -40,3 +39,7 @@ server:
     include-message: never
     include-stacktrace: never
     include-binding-errors: never
+
+granthalay:
+  web:
+    allowed-origins: ${GRANTHALAY_WEB_ALLOWED_ORIGINS:https://samsterzero.github.io}
