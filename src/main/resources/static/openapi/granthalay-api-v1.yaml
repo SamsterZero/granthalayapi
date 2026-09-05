@@ -14,6 +14,8 @@ tags:
     description: API discovery and contract metadata.
   - name: Identity
     description: User account registration, email verification, and session sign-in.
+  - name: Catalog
+    description: Book catalog metadata, titles, editions, and availability.
 paths:
   /api/v1:
     get:
@@ -188,6 +190,84 @@ paths:
               schema:
                 $ref: '#/components/schemas/AccountResponse'
         '401':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/catalog/titles:
+    get:
+      tags: [Catalog]
+      operationId: listCatalogTitles
+      summary: Browse and search catalog titles
+      security: []
+      parameters:
+        - name: search
+          in: query
+          description: Search text matching title or author name.
+          required: false
+          schema:
+            type: string
+        - name: language
+          in: query
+          description: Filter titles by ISO language code.
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Paginated catalog titles list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTitleSummaryPage'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/catalog/titles/{slug}:
+    get:
+      tags: [Catalog]
+      operationId: getCatalogTitleBySlug
+      summary: Fetch catalog title details by slug
+      security: []
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: Unique URL slug for the catalog title.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Catalog title details with contributors and available editions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogTitleDetailResponse'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/catalog/editions/{editionId}:
+    get:
+      tags: [Catalog]
+      operationId: getCatalogEditionById
+      summary: Fetch catalog edition details by edition ID
+      security: []
+      parameters:
+        - name: editionId
+          in: path
+          required: true
+          description: Unique identifier for the catalog edition.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Catalog edition details with pricing and availability.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogEditionResponse'
+        '404':
           $ref: '#/components/responses/Problem'
         '500':
           $ref: '#/components/responses/Problem'
@@ -403,3 +483,136 @@ components:
         message:
           type: string
           description: Safe human-readable explanation; rejected values are omitted.
+    CatalogTitleSummaryResponse:
+      type: object
+      additionalProperties: false
+      required: [id, slug, title, language]
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        language:
+          type: string
+        primaryAuthorName:
+          type: string
+    CatalogContributorResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, role]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        bio:
+          type: string
+    EditionPriceResponse:
+      type: object
+      additionalProperties: false
+      required: [currency, amountInCents, territory]
+      properties:
+        currency:
+          type: string
+        amountInCents:
+          type: integer
+          format: int64
+        territory:
+          type: string
+    EditionAvailabilityResponse:
+      type: object
+      additionalProperties: false
+      required: [territory, isAvailable]
+      properties:
+        territory:
+          type: string
+        isAvailable:
+          type: boolean
+        availableFrom:
+          type: string
+          format: date-time
+        availableUntil:
+          type: string
+          format: date-time
+    CatalogEditionResponse:
+      type: object
+      additionalProperties: false
+      required: [id, format, editionNumber, status, prices, availability]
+      properties:
+        id:
+          type: string
+        isbn:
+          type: string
+        format:
+          type: string
+        editionNumber:
+          type: integer
+          format: int32
+        publisherId:
+          type: string
+        publishedDate:
+          type: string
+          format: date
+        status:
+          type: string
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/EditionPriceResponse'
+        availability:
+          type: array
+          items:
+            $ref: '#/components/schemas/EditionAvailabilityResponse'
+    CatalogTitleDetailResponse:
+      type: object
+      additionalProperties: false
+      required: [id, slug, title, language, contributors, editions]
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        description:
+          type: string
+        language:
+          type: string
+        contributors:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogContributorResponse'
+        editions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogEditionResponse'
+    CatalogTitleSummaryPage:
+      type: object
+      additionalProperties: false
+      required: [content, page, size, totalElements, totalPages]
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogTitleSummaryResponse'
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+
