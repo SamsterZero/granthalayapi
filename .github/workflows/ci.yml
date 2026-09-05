@@ -41,7 +41,8 @@ jobs:
         run: docker compose config --quiet
 
       - name: Validate Kubernetes manifests
-        run: kubectl apply --dry-run=client -f k8s/
+        run: kubectl kustomize k8s/ > /dev/null
+
 
       - name: Build application image
         run: docker build -t granthalay-api:ci .

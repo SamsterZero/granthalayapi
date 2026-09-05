@@ -37,7 +37,8 @@ jobs:
       - name: Validate Kubernetes Manifests
         if: inputs.target == 'kubernetes'
         run: |
-          kubectl apply --dry-run=client -f k8s/
+          kubectl kustomize k8s/ > /dev/null
+
 
       - name: Validate Docker Compose Configuration
         if: inputs.target == 'compute'
