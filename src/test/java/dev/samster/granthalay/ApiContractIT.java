@@ -36,8 +36,7 @@ class ApiContractIT {
 	@Test
 	void allowsCredentialedCorsOnlyForConfiguredOrigins() throws Exception {
 		var allowed = request("/api/v1", "https://reader.example");
-		assertThat(allowed.headers().firstValue("Access-Control-Allow-Origin"))
-			.hasValue("https://reader.example");
+		assertThat(allowed.headers().firstValue("Access-Control-Allow-Origin")).hasValue("https://reader.example");
 		assertThat(allowed.headers().firstValue("Access-Control-Allow-Credentials")).hasValue("true");
 
 		var denied = request("/api/v1", "https://attacker.example");

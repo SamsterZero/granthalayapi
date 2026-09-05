@@ -24,29 +24,35 @@ class HttpBoundaryTests {
 		for (var candidate : scanner.findCandidateComponents("dev.samster.granthalay")) {
 			var controller = Class.forName(candidate.getBeanClassName());
 			for (var method : controller.getDeclaredMethods()) {
-				var boundaryTypes = Stream.concat(Stream.of(method.getGenericReturnType()),
-						Arrays.stream(method.getGenericParameterTypes()));
-				assertThat(boundaryTypes).as("HTTP types used by %s#%s", controller.getName(), method.getName())
-					.noneMatch(HttpBoundaryTests::containsEntity);
+				var returnType = Stream.of(method.getGenericReturnType());
+				var parameterTypes = Arrays.stream(method.getGenericParameterTypes());
+				var boundaryTypes = Stream.concat(returnType, parameterTypes);
+				var description = "HTTP types used by %s#%s".formatted(controller.getName(), method.getName());
+				assertThat(boundaryTypes).as(description).noneMatch(HttpBoundaryTests::containsEntity);
 			}
 		}
 	}
 
 	private static boolean containsEntity(Type type) {
 		if (type instanceof Class<?> candidate) {
-			return candidate.isAnnotationPresent(Entity.class)
-					|| candidate.isArray() && containsEntity(candidate.componentType());
+			if (candidate.isAnnotationPresent(Entity.class)) {
+				return true;
+			}
+			return candidate.isArray() && containsEntity(candidate.componentType());
 		}
 		if (type instanceof ParameterizedType parameterized) {
-			return containsEntity(parameterized.getRawType())
-					|| Arrays.stream(parameterized.getActualTypeArguments()).anyMatch(HttpBoundaryTests::containsEntity);
+			if (containsEntity(parameterized.getRawType())) {
+				return true;
+			}
+			return Arrays.stream(parameterized.getActualTypeArguments()).anyMatch(HttpBoundaryTests::containsEntity);
 		}
 		if (type instanceof GenericArrayType array) {
 			return containsEntity(array.getGenericComponentType());
 		}
 		if (type instanceof WildcardType wildcard) {
-			return Stream.concat(Arrays.stream(wildcard.getLowerBounds()), Arrays.stream(wildcard.getUpperBounds()))
-				.anyMatch(HttpBoundaryTests::containsEntity);
+			var lowerBounds = Arrays.stream(wildcard.getLowerBounds());
+			var upperBounds = Arrays.stream(wildcard.getUpperBounds());
+			return Stream.concat(lowerBounds, upperBounds).anyMatch(HttpBoundaryTests::containsEntity);
 		}
 		return false;
 	}
