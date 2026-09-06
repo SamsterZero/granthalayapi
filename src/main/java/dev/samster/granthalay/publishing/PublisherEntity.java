@@ -34,20 +34,29 @@ class PublisherEntity {
 	@Column(name = "contact_email", nullable = false)
 	private String contactEmail;
 
+	@Column(name = "payout_reference")
+	private String payoutReference;
+
 	@Column(name = "created_at", nullable = false)
 	private Instant createdAt;
 
 	@Column(name = "updated_at", nullable = false)
 	private Instant updatedAt;
 
-	PublisherEntity(String id, String name, PublisherStatus status, String contactEmail, Instant createdAt,
-			Instant updatedAt) {
+	PublisherEntity(String id, String name, PublisherStatus status, String contactEmail, String payoutReference,
+			Instant createdAt, Instant updatedAt) {
 		this.id = id;
 		this.name = name;
 		this.status = status;
 		this.contactEmail = contactEmail;
+		this.payoutReference = payoutReference;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+	}
+
+	PublisherEntity(String id, String name, PublisherStatus status, String contactEmail, Instant createdAt,
+			Instant updatedAt) {
+		this(id, name, status, contactEmail, null, createdAt, updatedAt);
 	}
 
 }
