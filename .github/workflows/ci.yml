@@ -48,4 +48,4 @@ jobs:
         run: docker build -t granthalay-api:ci .
 
       - name: Check container startup and database outage
-        run: python3 scripts/check-container.py --engine docker --image granthalay-api:ci
+        run: bash scripts/check-container.sh --engine docker --image granthalay-api:ci

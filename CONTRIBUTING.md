@@ -78,10 +78,10 @@ Build the application image locally with:
 docker build -t granthalay-api:dev .
 ```
 
-With Python 3 available, check the image against an isolated Compose database:
+Check the image against an isolated Compose database:
 
 ```sh
-python3 scripts/check-container.py --engine podman --image granthalay-api:dev
+bash scripts/check-container.sh --engine podman --image granthalay-api:dev
 ```
 
 Use `--engine docker` for Docker. The check verifies startup and probe behavior during a database
