@@ -72,6 +72,7 @@ flowchart TD
 - [ ] Implement `entitlements` module: Purchase verification & ownership rules.
 
 ### Phase 4: Protected Delivery & Publishing
+- [x] Implement `storage` module: Secure EPUB ingestion, validation, versioning, and object storage (Issue #9).
 - [ ] Implement `delivery` module: Streamed EPUB content delivery.
 - [ ] Implement `publishing` module: Publisher dashboard & submission pipeline.
 
