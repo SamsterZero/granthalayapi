@@ -23,8 +23,49 @@ public class PublishingController {
 
 	private final PublisherReleaseUseCase releaseUseCase;
 
-	public PublishingController(PublisherReleaseUseCase releaseUseCase) {
+	private final PublisherOnboardingUseCase onboardingUseCase;
+
+	public PublishingController(PublisherReleaseUseCase releaseUseCase, PublisherOnboardingUseCase onboardingUseCase) {
 		this.releaseUseCase = releaseUseCase;
+		this.onboardingUseCase = onboardingUseCase;
+	}
+
+	@PostMapping("/publishers/onboard")
+	public ResponseEntity<PublisherResponse> onboardPublisher(@Valid @RequestBody OnboardPublisherRequest request,
+			Principal principal) {
+		String userId = principal != null ? principal.getName() : "system";
+		PublisherResponse response = onboardingUseCase.onboardPublisher(request, userId);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+	}
+
+	@GetMapping("/publishers/me")
+	public ResponseEntity<List<PublisherResponse>> getMyPublishers(Principal principal) {
+		String userId = principal != null ? principal.getName() : "system";
+		List<PublisherResponse> publishers = onboardingUseCase.getPublishersForUser(userId);
+		return ResponseEntity.ok(publishers);
+	}
+
+	@GetMapping("/publishers/{publisherId}")
+	public ResponseEntity<PublisherResponse> getPublisherById(@PathVariable String publisherId, Principal principal) {
+		String userId = principal != null ? principal.getName() : "system";
+		PublisherResponse publisher = onboardingUseCase.getPublisherProfile(publisherId, userId);
+		return ResponseEntity.ok(publisher);
+	}
+
+	@PutMapping("/publishers/{publisherId}")
+	public ResponseEntity<PublisherResponse> updatePublisherProfile(@PathVariable String publisherId,
+			@Valid @RequestBody UpdatePublisherProfileRequest request, Principal principal) {
+		String userId = principal != null ? principal.getName() : "system";
+		PublisherResponse publisher = onboardingUseCase.updatePublisherProfile(publisherId, request, userId);
+		return ResponseEntity.ok(publisher);
+	}
+
+	@PostMapping("/publishers/{publisherId}/members")
+	public ResponseEntity<PublisherMemberResponse> addPublisherMember(@PathVariable String publisherId,
+			@Valid @RequestBody AddPublisherMemberRequest request, Principal principal) {
+		String userId = principal != null ? principal.getName() : "system";
+		PublisherMemberResponse member = onboardingUseCase.addPublisherMember(publisherId, request, userId);
+		return ResponseEntity.status(HttpStatus.CREATED).body(member);
 	}
 
 	@PostMapping("/submissions")

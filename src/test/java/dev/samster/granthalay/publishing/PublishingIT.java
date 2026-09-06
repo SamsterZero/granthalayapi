@@ -27,6 +27,9 @@ class PublishingIT {
 	PublisherReleaseUseCase releaseUseCase;
 
 	@Autowired
+	PublisherOnboardingUseCase onboardingUseCase;
+
+	@Autowired
 	ManageCatalogUseCase manageCatalogUseCase;
 
 	@Autowired
@@ -101,6 +104,46 @@ class PublishingIT {
 		assertThatThrownBy(() -> releaseUseCase.publishRelease(sub.id(), publishReq))
 			.isInstanceOf(IllegalStateException.class)
 			.hasMessageContaining("Cannot publish submission in status: SUBMITTED");
+	}
+
+	@Test
+	void onboardPublisherAndManageTeamMembers() {
+		String ownerUserId = "user-owner-1";
+
+		// 1. Onboard Publisher Profile
+		OnboardPublisherRequest onboardReq = new OnboardPublisherRequest("HarperCollins", "contact@harper.example",
+				"payout_ref_harper_100");
+		PublisherResponse publisherRes = onboardingUseCase.onboardPublisher(onboardReq, ownerUserId);
+
+		assertThat(publisherRes.name()).isEqualTo("HarperCollins");
+		assertThat(publisherRes.contactEmail()).isEqualTo("contact@harper.example");
+		assertThat(publisherRes.payoutReference()).isEqualTo("payout_ref_harper_100");
+		assertThat(publisherRes.status()).isEqualTo("APPROVED");
+
+		// 2. Fetch User's Associated Publishers
+		List<PublisherResponse> myPublishers = onboardingUseCase.getPublishersForUser(ownerUserId);
+		assertThat(myPublishers).extracting(PublisherResponse::id).contains(publisherRes.id());
+
+		// 3. Add Team Member
+		AddPublisherMemberRequest memberReq = new AddPublisherMemberRequest("user-editor-2", "EDITOR");
+		PublisherMemberResponse memberRes = onboardingUseCase.addPublisherMember(publisherRes.id(), memberReq,
+				ownerUserId);
+		assertThat(memberRes.userId()).isEqualTo("user-editor-2");
+		assertThat(memberRes.role()).isEqualTo("EDITOR");
+
+		// 4. Update Publisher Profile
+		UpdatePublisherProfileRequest updateReq = new UpdatePublisherProfileRequest("HarperCollins Global",
+				"updated@harper.example", "payout_ref_harper_200");
+		PublisherResponse updated = onboardingUseCase.updatePublisherProfile(publisherRes.id(), updateReq, ownerUserId);
+		assertThat(updated.name()).isEqualTo("HarperCollins Global");
+		assertThat(updated.contactEmail()).isEqualTo("updated@harper.example");
+		assertThat(updated.payoutReference()).isEqualTo("payout_ref_harper_200");
+
+		// 5. Tenant Isolation / Authorization Enforcement
+		String unauthorizedUserId = "unauthorized-user-999";
+		assertThatThrownBy(() -> onboardingUseCase.getPublisherProfile(publisherRes.id(), unauthorizedUserId))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("unauthorized-user-999 is not authorized");
 	}
 
 }

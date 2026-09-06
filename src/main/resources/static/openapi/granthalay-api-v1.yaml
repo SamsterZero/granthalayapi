@@ -489,6 +489,145 @@ paths:
           $ref: '#/components/responses/Problem'
         '500':
           $ref: '#/components/responses/Problem'
+  /api/v1/publishing/publishers/onboard:
+    post:
+      tags: [Publishing]
+      operationId: onboardPublisher
+      summary: Onboard a new publisher profile
+      security:
+        - sessionCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardPublisherRequest'
+      responses:
+        '201':
+          description: Publisher profile created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublisherResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/publishers/me:
+    get:
+      tags: [Publishing]
+      operationId: getMyPublishers
+      summary: List publisher profiles associated with current user
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: List of associated publisher profiles.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublisherResponse'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/publishers/{publisherId}:
+    get:
+      tags: [Publishing]
+      operationId: getPublisherById
+      summary: Fetch publisher profile details by ID
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: publisherId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Publisher profile details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublisherResponse'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+    put:
+      tags: [Publishing]
+      operationId: updatePublisherProfile
+      summary: Update publisher profile details
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: publisherId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePublisherProfileRequest'
+      responses:
+        '200':
+          description: Publisher profile updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublisherResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+  /api/v1/publishing/publishers/{publisherId}/members:
+    post:
+      tags: [Publishing]
+      operationId: addPublisherMember
+      summary: Add a team member to a publisher profile
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: publisherId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPublisherMemberRequest'
+      responses:
+        '201':
+          description: Publisher team member added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublisherMemberResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
   /api/v1/storage/epubs/{editionId}:
     post:
       tags: [Storage]
@@ -1041,5 +1180,74 @@ components:
         createdAt:
           type: string
           format: date-time
+    OnboardPublisherRequest:
+      type: object
+      additionalProperties: false
+      required: [name, contactEmail]
+      properties:
+        name:
+          type: string
+        contactEmail:
+          type: string
+        payoutReference:
+          type: string
+    UpdatePublisherProfileRequest:
+      type: object
+      additionalProperties: false
+      required: [name, contactEmail]
+      properties:
+        name:
+          type: string
+        contactEmail:
+          type: string
+        payoutReference:
+          type: string
+    AddPublisherMemberRequest:
+      type: object
+      additionalProperties: false
+      required: [userId, role]
+      properties:
+        userId:
+          type: string
+        role:
+          type: string
+    PublisherResponse:
+      type: object
+      additionalProperties: false
+      required: [id, name, status, contactEmail, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+        contactEmail:
+          type: string
+        payoutReference:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    PublisherMemberResponse:
+      type: object
+      additionalProperties: false
+      required: [id, publisherId, userId, role, createdAt]
+      properties:
+        id:
+          type: string
+        publisherId:
+          type: string
+        userId:
+          type: string
+        role:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
 
 

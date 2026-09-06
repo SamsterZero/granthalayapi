@@ -73,8 +73,8 @@ flowchart TD
 
 ### Phase 4: Protected Delivery & Publishing
 - [x] Implement `storage` module: Secure EPUB ingestion, validation, versioning, and object storage (Issue #9).
+- [x] Implement `publishing` module: Publisher onboarding, team member roles, payout references, and metadata submission (Issue #13).
 - [ ] Implement `delivery` module: Streamed EPUB content delivery.
-- [ ] Implement `publishing` module: Publisher dashboard & submission pipeline.
 
 ---
 
