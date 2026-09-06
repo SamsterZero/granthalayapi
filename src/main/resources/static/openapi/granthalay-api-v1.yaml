@@ -18,6 +18,8 @@ tags:
     description: Book catalog metadata, titles, editions, and availability.
   - name: Publishing
     description: Publisher onboarding, submission review, release publishing, withdrawal, and replacement.
+  - name: Storage
+    description: Object storage, secure EPUB file ingestion, validation, and object metadata.
 paths:
   /api/v1:
     get:
@@ -487,6 +489,69 @@ paths:
           $ref: '#/components/responses/Problem'
         '500':
           $ref: '#/components/responses/Problem'
+  /api/v1/storage/epubs/{editionId}:
+    post:
+      tags: [Storage]
+      operationId: uploadEpub
+      summary: Upload and validate an EPUB file for a catalog edition
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: editionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: EPUB binary package file
+      responses:
+        '201':
+          description: EPUB file validated and stored successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageObjectResponse'
+        '400':
+          $ref: '#/components/responses/ValidationProblem'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
+    get:
+      tags: [Storage]
+      operationId: getStorageObjectByEdition
+      summary: Fetch stored EPUB metadata by edition ID
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: editionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stored EPUB object metadata.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageObjectResponse'
+        '401':
+          $ref: '#/components/responses/Problem'
+        '404':
+          $ref: '#/components/responses/Problem'
+        '500':
+          $ref: '#/components/responses/Problem'
 components:
   securitySchemes:
     sessionCookie:
@@ -948,4 +1013,33 @@ components:
         createdAt:
           type: string
           format: date-time
+    StorageObjectResponse:
+      type: object
+      additionalProperties: false
+      required: [id, editionId, version, storageKey, filename, contentType, sizeBytes, sha256Hash, status, createdAt]
+      properties:
+        id:
+          type: string
+        editionId:
+          type: string
+        version:
+          type: integer
+          format: int32
+        storageKey:
+          type: string
+        filename:
+          type: string
+        contentType:
+          type: string
+        sizeBytes:
+          type: integer
+          format: int64
+        sha256Hash:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
 

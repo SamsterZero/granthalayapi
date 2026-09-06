@@ -36,7 +36,7 @@ class DatabaseIT {
 	@Test
 	void migrationsAreAppliedAndDoNotRepeat() {
 		flyway.validate();
-		assertThat(flyway.info().applied()).hasSize(6);
+		assertThat(flyway.info().applied()).hasSize(7);
 
 		assertThat(flyway.info().pending()).isEmpty();
 		assertThat(flyway.migrate().migrationsExecuted).isZero();
