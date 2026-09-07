@@ -55,7 +55,7 @@ public class CatalogQueryUseCase {
 		String price = title.getEditions()
 			.stream()
 			.flatMap(e -> e.getPrices().stream())
-			.min(Comparator.comparingInt(EditionPriceEntity::getAmountInCents))
+			.min(Comparator.comparingLong(EditionPriceEntity::getAmountInCents))
 			.map(p -> formatPrice(p.getCurrency(), p.getAmountInCents()))
 			.orElse(null);
 
@@ -63,7 +63,7 @@ public class CatalogQueryUseCase {
 				title.getLanguage(), primaryAuthor, price);
 	}
 
-	private String formatPrice(String currency, int amountInCents) {
+	private String formatPrice(String currency, long amountInCents) {
 		if (amountInCents <= 0) {
 			return "Free";
 		}
