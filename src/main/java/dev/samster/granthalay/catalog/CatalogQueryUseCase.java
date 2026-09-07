@@ -52,8 +52,24 @@ public class CatalogQueryUseCase {
 			.findFirst()
 			.orElse(null);
 
+		String price = title.getEditions()
+			.stream()
+			.flatMap(e -> e.getPrices().stream())
+			.min(Comparator.comparingInt(EditionPriceEntity::getAmountInCents))
+			.map(p -> formatPrice(p.getCurrency(), p.getAmountInCents()))
+			.orElse(null);
+
 		return new CatalogTitleSummaryResponse(title.getId(), title.getSlug(), title.getTitle(), title.getSubtitle(),
-				title.getLanguage(), primaryAuthor);
+				title.getLanguage(), primaryAuthor, price);
+	}
+
+	private String formatPrice(String currency, int amountInCents) {
+		if (amountInCents <= 0) {
+			return "Free";
+		}
+		String symbol = "USD".equalsIgnoreCase(currency) ? "$"
+				: ("EUR".equalsIgnoreCase(currency) ? "€" : currency + " ");
+		return String.format("%s%.2f", symbol, amountInCents / 100.0);
 	}
 
 	private CatalogTitleDetailResponse toDetailResponse(TitleEntity title) {
