@@ -56,6 +56,7 @@ class SessionSecurityIT {
 
 		var setCookie1 = signInRes1.headers().firstValue("Set-Cookie").orElseThrow();
 		assertThat(setCookie1).contains("SESSION=").contains("HttpOnly").contains("SameSite=Lax");
+		assertThat(setCookie1).doesNotContain("Max-Age");
 
 		// Client 1 /me access succeeds
 		var meReq1 = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/auth/me")).GET().build();
@@ -83,6 +84,28 @@ class SessionSecurityIT {
 		var meRes2 = client2.send(meReq2, HttpResponse.BodyHandlers.ofString());
 		assertThat(meRes2.statusCode()).isEqualTo(200);
 
+		// Client 3 opts into a persistent, longer-lived session
+		var rememberedCookieManager = new CookieManager();
+		var rememberedClient = HttpClient.newBuilder().cookieHandler(rememberedCookieManager).build();
+		var rememberedSignInBody = "{\"email\":\"" + email + "\",\"password\":\"" + password
+				+ "\",\"rememberMe\":true}";
+		var rememberedSignInRequest = HttpRequest
+			.newBuilder(URI.create("http://localhost:" + port + "/api/v1/auth/sign-in"))
+			.header("Content-Type", "application/json")
+			.POST(HttpRequest.BodyPublishers.ofString(rememberedSignInBody))
+			.build();
+		var rememberedSignInResponse = rememberedClient.send(rememberedSignInRequest,
+				HttpResponse.BodyHandlers.ofString());
+		assertThat(rememberedSignInResponse.statusCode()).isEqualTo(200);
+		assertThat(rememberedSignInResponse.headers().firstValue("Set-Cookie").orElseThrow()).contains("SESSION=",
+				"HttpOnly", "SameSite=Lax", "Max-Age=2592000");
+
+		var rememberedMeRequest = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/auth/me"))
+			.GET()
+			.build();
+		assertThat(rememberedClient.send(rememberedMeRequest, HttpResponse.BodyHandlers.ofString()).statusCode())
+			.isEqualTo(200);
+
 		// Client 1 triggers revocation of all active sessions
 		var revokeReq = HttpRequest.newBuilder(URI.create("http://localhost:" + port + "/api/v1/auth/revoke-sessions"))
 			.POST(HttpRequest.BodyPublishers.noBody())
@@ -97,6 +120,10 @@ class SessionSecurityIT {
 
 		var meRes2AfterRevoke = client2.send(meReq2, HttpResponse.BodyHandlers.ofString());
 		assertThat(meRes2AfterRevoke.statusCode()).isEqualTo(403);
+
+		var rememberedMeResponseAfterRevoke = rememberedClient.send(rememberedMeRequest,
+				HttpResponse.BodyHandlers.ofString());
+		assertThat(rememberedMeResponseAfterRevoke.statusCode()).isEqualTo(403);
 	}
 
 }
