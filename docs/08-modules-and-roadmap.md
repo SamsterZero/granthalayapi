@@ -42,7 +42,7 @@ flowchart TD
 
 ## Module Responsibilities
 
-1. **`identity`**: Manages user registration, password authentication, and revocable browser sessions stored in PostgreSQL (`SPRING_SESSION`).
+1. **`identity`**: Manages user registration, password authentication, and revocable browser sessions stored in PostgreSQL (`SPRING_SESSION`). Sign-in can optionally issue a longer-lived persistent cookie; no password or session credential is stored in browser-accessible storage.
 2. **`catalog`**: Manages book catalog metadata, search indices, author details, genres, and public catalog listings.
 3. **`publishing`**: Manages publisher accounts, manuscript submissions, approval workflows, and publication metadata.
 4. **`storage`**: Provides abstraction over physical book object storage (Local filesystem, S3, GCS) behind replaceable provider adapters.

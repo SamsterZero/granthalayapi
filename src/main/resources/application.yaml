@@ -51,5 +51,7 @@ management:
           include: readinessState,db
 
 granthalay:
+  identity:
+    remember-me-duration: ${GRANTHALAY_REMEMBER_ME_DURATION:30d}
   web:
     allowed-origins: ${GRANTHALAY_WEB_ALLOWED_ORIGINS:https://samsterzero.github.io}

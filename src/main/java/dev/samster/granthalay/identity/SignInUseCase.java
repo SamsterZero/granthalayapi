@@ -21,11 +21,15 @@ public class SignInUseCase {
 
 	private final PasswordEncoder passwordEncoder;
 
+	private final RememberMeSessionPolicy rememberMeSessionPolicy;
+
 	private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
-	public SignInUseCase(UserAccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+	public SignInUseCase(UserAccountRepository accountRepository, PasswordEncoder passwordEncoder,
+			RememberMeSessionPolicy rememberMeSessionPolicy) {
 		this.accountRepository = accountRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.rememberMeSessionPolicy = rememberMeSessionPolicy;
 	}
 
 	@Transactional(readOnly = true)
@@ -53,7 +57,14 @@ public class SignInUseCase {
 		var securityContext = SecurityContextHolder.createEmptyContext();
 		securityContext.setAuthentication(auth);
 		SecurityContextHolder.setContext(securityContext);
+		if (request.rememberMeRequested()) {
+			httpRequest.setAttribute(rememberMeSessionPolicy.requestAttributeName(), Boolean.TRUE);
+		}
 		securityContextRepository.saveContext(securityContext, httpRequest, httpResponse);
+
+		if (request.rememberMeRequested()) {
+			httpRequest.getSession(false).setMaxInactiveInterval(rememberMeSessionPolicy.durationSeconds());
+		}
 
 		return new AccountResponse(account.getId(), account.getEmail(), account.getStatus(), account.getCreatedAt());
 	}

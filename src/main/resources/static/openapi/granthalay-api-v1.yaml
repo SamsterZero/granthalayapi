@@ -87,6 +87,10 @@ paths:
       tags: [Identity]
       operationId: signIn
       summary: Sign in with email and password
+      description: |-
+        Establishes a revocable browser session. When `rememberMe` is true, the session and its
+        HttpOnly cookie remain valid for the configured remember-me duration; otherwise the cookie
+        expires when the browser session ends and the server session uses its default timeout.
       security: []
       requestBody:
         required: true
@@ -785,6 +789,10 @@ components:
         password:
           type: string
           example: SecureP@ssw0rd!
+        rememberMe:
+          type: boolean
+          default: false
+          description: Keep this browser signed in using a longer-lived, revocable session cookie.
     RequestPasswordResetRequest:
       type: object
       additionalProperties: false
@@ -1248,6 +1256,5 @@ components:
         createdAt:
           type: string
           format: date-time
-
 
 

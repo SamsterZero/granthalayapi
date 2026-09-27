@@ -5,5 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 
 public record SignInRequest(
 		@NotBlank(message = "Email is required") @Email(message = "Invalid email address format") String email,
-		@NotBlank(message = "Password is required") String password) {
+		@NotBlank(message = "Password is required") String password, Boolean rememberMe) {
+
+	boolean rememberMeRequested() {
+		return Boolean.TRUE.equals(rememberMe);
+	}
+
 }
