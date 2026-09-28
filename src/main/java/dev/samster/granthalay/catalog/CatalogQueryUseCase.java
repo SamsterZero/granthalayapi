@@ -2,6 +2,7 @@ package dev.samster.granthalay.catalog;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -69,7 +70,7 @@ public class CatalogQueryUseCase {
 		}
 		String symbol = "USD".equalsIgnoreCase(currency) ? "$"
 				: ("EUR".equalsIgnoreCase(currency) ? "€" : currency + " ");
-		return String.format("%s%.2f", symbol, amountInCents / 100.0);
+		return String.format(Locale.ROOT, "%s%d.%02d", symbol, amountInCents / 100, amountInCents % 100);
 	}
 
 	private CatalogTitleDetailResponse toDetailResponse(TitleEntity title) {

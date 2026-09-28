@@ -81,6 +81,7 @@ class CatalogIT {
 		assertThat(res.body()).contains(titleSlug);
 		assertThat(res.body()).contains("The God of Small Things");
 		assertThat(res.body()).contains("Arundhati Roy");
+		assertThat(res.body()).contains("\"price\":\"$14.99\"");
 	}
 
 	@Test

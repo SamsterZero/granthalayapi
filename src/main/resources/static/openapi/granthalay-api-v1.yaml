@@ -928,6 +928,9 @@ components:
           type: string
         primaryAuthorName:
           type: string
+        price:
+          type: string
+          description: Human-readable lowest edition price, or Free for a zero-priced edition.
     CatalogContributorResponse:
       type: object
       additionalProperties: false
@@ -1256,5 +1259,4 @@ components:
         createdAt:
           type: string
           format: date-time
-
 
