@@ -1,7 +1,7 @@
 -- Seed sample catalog titles, contributors, editions, prices, and availability for testing
 
 INSERT INTO catalog_titles (id, slug, title, subtitle, description, language, created_at, updated_at)
-VALUES 
+VALUES
 	('ct-1', 'the-great-gatsby', 'The Great Gatsby', 'A Novel of the Roaring Twenties', 'Set in Long Island during the Jazz Age, the story tells the tragic tale of Jay Gatsby and his unrequited love for Daisy Buchanan.', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('ct-2', 'pride-and-prejudice', 'Pride and Prejudice', 'A Classic Romance of Manners', 'Elizabeth Bennet navigates issues of manners, upbringing, morality, education, and marriage in the society of the British landed gentry.', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('ct-3', 'moby-dick', 'Moby Dick', 'The Whale', 'Sailor Ishmael recounts the obsessive quest of Ahab, captain of the whaling ship Pequod, for revenge against Moby Dick.', 'en', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
