@@ -2,6 +2,7 @@ package dev.samster.granthalay.catalog;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
@@ -52,8 +53,24 @@ public class CatalogQueryUseCase {
 			.findFirst()
 			.orElse(null);
 
+		String price = title.getEditions()
+			.stream()
+			.flatMap(e -> e.getPrices().stream())
+			.min(Comparator.comparingLong(EditionPriceEntity::getAmountInCents))
+			.map(p -> formatPrice(p.getCurrency(), p.getAmountInCents()))
+			.orElse(null);
+
 		return new CatalogTitleSummaryResponse(title.getId(), title.getSlug(), title.getTitle(), title.getSubtitle(),
-				title.getLanguage(), primaryAuthor);
+				title.getLanguage(), primaryAuthor, price);
+	}
+
+	private String formatPrice(String currency, long amountInCents) {
+		if (amountInCents <= 0) {
+			return "Free";
+		}
+		String symbol = "USD".equalsIgnoreCase(currency) ? "$"
+				: ("EUR".equalsIgnoreCase(currency) ? "€" : currency + " ");
+		return String.format(Locale.ROOT, "%s%d.%02d", symbol, amountInCents / 100, amountInCents % 100);
 	}
 
 	private CatalogTitleDetailResponse toDetailResponse(TitleEntity title) {
